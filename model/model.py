@@ -55,15 +55,6 @@ def predecir_estado(datos: Dict[str, Any]) -> str:
             "Valores fuera de rango. Revise edad, temperatura, frecuencia cardiaca, días de síntomas y dolor."
         )
 
-    # Regla 1: enfermedad terminal.
-    # Se prioriza cuando los síntomas llevan mucho tiempo o no hay persistencia clínica.
-    if (
-        dias_sintomas >= 100
-        or (dias_sintomas >= 70 and dolor >= 8)
-        or (edad >= 45 and dias_sintomas >= 70)
-    ):
-        return "ENFERMEDAD TERMINAL"
-
     # Regla 1: enfermedad crónica.
     # Se prioriza cuando los síntomas llevan mucho tiempo o hay persistencia clínica.
     if (

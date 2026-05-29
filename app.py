@@ -14,7 +14,6 @@ Funciones:
 
 from flask import Flask, request, jsonify, render_template
 from model.model import predecir_estado
-from utils.guardar_prediccion import registrar_prediccion, obtener_reporte
 
 app = Flask(__name__)
 
@@ -43,8 +42,6 @@ def home():
                 "dolor": request.form.get("dolor"),
             }
             resultado = predecir_estado(datos)
-            registrar_prediccion(resultado, datos)
-
         except ValueError as exc:
             error = str(exc)
 
@@ -67,8 +64,6 @@ def predecir_api():
     try:
         datos = request.get_json(force=True)
         resultado = predecir_estado(datos)
-        registrar_prediccion(resultado, datos)
-
         return (
             jsonify(
                 {
@@ -99,17 +94,6 @@ def salud():
         Response: JSON con el estado del servicio y el nombre del modelo.
     """
     return jsonify({"status": "ok", "servicio": "modelo-medico-simulado"}), 200
-
-
-@app.route("/reporte", methods=["GET"])
-def reporte():
-    reporte_predicciones = obtener_reporte()
-    return render_template("reporte.html", reporte=reporte_predicciones)
-
-
-@app.route("/api/reporte", methods=["GET"])
-def reporte_json():
-    return jsonify(obtener_reporte())
 
 
 if __name__ == "__main__":
