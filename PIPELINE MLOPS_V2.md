@@ -115,7 +115,7 @@ La etapa de servicios de **modelos y consumo** tiene como **objetivo desplegar l
 
 Una vez desplegados, los modelos serán **expuestos mediante APIs REST seguras y endpoints específicos para inferencia** autenticados mediante tokens o credenciales institucionales. A través de estos **servicios, aplicaciones hospitalarias, dashboards clínicos, historias clínicas electrónicas o plataformas web** podrán enviar información de pacientes en **formato JSON** para recibir respuesta predicciones asociadas a **posibles enfermedades, probabilidades de riesgo y explicaciones generadas por el modelo**. Los usuarios clínicos accederán a estas funcionalidades desde interfaces web o sistemas hospitalarios integrados, sin necesidad de interactuar directamente con la infraestructura del modelo.
 
-![alt text](img/nodelo_consumo.png)
+![alt text](img/modelo_consumo.png)
 
 ## **7. IA Generativa y RAG**
 
