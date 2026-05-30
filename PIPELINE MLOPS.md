@@ -1,244 +1,133 @@
-# Servicio Médico con Flask y Docker
+# Taller Pipeline de MLOps
 
-**Equipo**:
-|Nombres |
-|---------|
-|Anderson Daniel Pipicano Ruiz|
-|Fredy Yamid Alvarez Palechor |
+**Integrantes:**
+* Anderson Daniel Pipicano Ruiz
+* Fredy Yamid Alvarez Palechor
 
-## 1. Finalidad de la solución
-
-Este proyecto implementa una solución mediante un servicio web que simula el uso de un modelo clínico.
-
-El objetivo es que un médico pueda ingresar datos básicos de un paciente y recibir uno de los siguientes estados:
-
-- `NO ENFERMO`
-- `ENFERMEDAD LEVE`
-- `ENFERMEDAD AGUDA`
-- `ENFERMEDAD CRÓNICA`
-
-En el desarrollo del modelo de machine learning se realizó una simulación del comportamiento del modelo se simula mediante una función llamada `predecir_estado`, ubicada en el archivo `model/model.py`.
-
-> Importante: esta solución es académica, demostrativa y como se puede implementar una solución a futuro para dicha problemática, esto no debería reemplazar el criterio médico ni debe usarse para diagnóstico real.
+**Grupo:** 2
 
 ---
 
-## 2. Estructura del proyecto
+## Descripción del problema
 
-```text
-servicio_medico_flask/
-│
-├── app.py                      # Aplicación Flask y función simulada del modelo
-├── requirements.txt            # Dependencias del proyecto
-├── Dockerfile                  # Archivo para construir la imagen Docker
-├── README.md                   # Instrucciones de uso
-├── .dockerignore               # Archivos ignorados por Docker
-│
-├── docs/
-│   └── Pipeline de MLOps.pdf   # Descripción de un Pipeline de MLOps
-│
-├── templates/
-│   └── index.html              # Página web sencilla para ingresar datos
-│
-├── static/
-│   └── style.css               # Estilos de la página web
-│
-├── model/
-│   └── model.py                # Módulo de predicción clínica simulada
-│
-├── utils/
-│   └── convertir_valores.py    # Módulo de conversión de valores para validación y normalización de datos
-│
-└── tests/
-    └── test_predict.py         # Pruebas básicas de la función de predicción
-```
+Actualmente, el sector salud genera grandes volúmenes de información provenientes de historias clínicas, registros hospitalarios, laboratorios y plataformas epidemiológicas, creando la posibilidad de implementar soluciones inteligentes que apoyen el diagnóstico médico y mejoren la toma de decisiones clínicas. 
 
----
+En este contexto, se propone desarrollar una solución basada en Machine Learning y MLOps capaz de predecir la posible presencia de enfermedades comunes y huérfanas a partir de síntomas, antecedentes y datos clínicos de los pacientes, integrando información proveniente de múltiples fuentes médicas. La solución busca reducir diagnósticos tardíos o incorrectos, optimizar la priorización de pacientes y mejorar la asignación de recursos médicos mediante modelos predictivos confiables, monitoreados y capaces de adaptarse continuamente a nuevos datos y cambios epidemiológicos.  
 
-## 3. Variables de entrada
+El pipeline integra procesos de adquisición de datos, aseguramiento de calidad, ingeniería de características, entrenamiento de modelos, despliegue de servicios inteligentes y monitoreo continuo, permitiendo construir una solución escalable, reproducible y adaptable a nuevos datos clínicos.  
 
-La función recibe 5 variables para hacer la simulación más real referente al diagnóstico:
+### Fuentes de datos
+La primera etapa corresponde a las fuentes de información utilizadas para alimentar el sistema analítico. La solución utilizará información proveniente de múltiples fuentes del sector salud, como:
+* Historias clínicas electrónicas.
+* Registros hospitalarios.
+* Sistemas RIPS.
+* Plataformas gubernamentales (SISPRO y SIVIGILA).
+* Resultados de laboratorio.
+* Bases de datos epidemiológicas.
 
-| Variable              | Descripción                             | Ejemplo |
-| --------------------- | --------------------------------------- | ------- |
-| `edad`                | Edad del paciente en años               | `45`    |
-| `temperatura`         | Temperatura corporal en grados Celsius  | `38.2`  |
-| `frecuencia_cardiaca` | Latidos por minuto                      | `105`   |
-| `dias_sintomas`       | Días que lleva el paciente con síntomas | `3`     |
-| `dolor`               | Nivel de dolor de 0 a 10                | `4`     |
+Estas fuentes pueden encontrarse almacenadas en bases de datos relacionales, bases de datos no relacionales y servicios expuestos mediante APIs, archivos planos y repositorios de imágenes médicas, permitiendo integrar información clínica proveniente de diferentes sistemas y plataformas. Debido a la diversidad de orígenes, el sistema debe integrar tanto datos estructurados (tablas y bases de datos) como datos no estructurados (notas médicas en texto libre o reportes clínicos), además de posibles datos temporales asociados al seguimiento y evolución del paciente.  
+
+Estas fuentes contienen información heterogénea relacionada con:  
+* Síntomas.  
+* Diagnósticos.  
+* Variables demográficas.  
+* Resultados de laboratorio.  
+* Evolución clínica del paciente.  
+* Antecedentes médicos.  
+
+### Restricciones y limitaciones
+* Desbalance de información: Gran disparidad entre enfermedades comunes y enfermedades huérfanas, ya que estas últimas poseen muy pocos registros disponibles para entrenamiento. 
+* Calidad de los datos: Los datos médicos suelen presentar inconsistencias, duplicidad, valores faltantes y diferentes formatos.
+* Privacidad y seguridad: Cumplimiento estricto de normativas sobre la protección de datos sensibles de los pacientes.
+* Interpretabilidad: Necesidad de explicabilidad en los modelos, debido a que las predicciones deben ser comprensibles y confiables para el personal médico.
 
 ---
 
-## 4. Lógica simulada del modelo
+## Ingesta y Calidad del Dato
 
-La función `predecir_estado` retorna un estado según reglas sencillas:
+La etapa de ingesta y calidad del dato tiene como objetivo integrar y preparar la información proveniente de las diferentes fuentes clínicas y epidemiológicas. 
 
-- Retorna `ENFERMEDAD CRÓNICA` si los síntomas llevan mucho tiempo o existe persistencia clínica.
-- Retorna `ENFERMEDAD AGUDA` si hay fiebre alta, frecuencia cardiaca muy elevada o dolor intenso reciente.
-- Retorna `ENFERMEDAD LEVE` si hay síntomas moderados sin señales de severidad alta.
-- Retorna `NO ENFERMO` si no hay señales relevantes en los valores ingresados.
-
-Ejemplos que permiten obtener cada estado:
-
-| Estado esperado      | Edad | Temperatura | Frecuencia cardiaca | Días síntomas | Dolor |
-| -------------------- | ---: | ----------: | ------------------: | ------------: | ----: |
-| `NO ENFERMO`         |   25 |        36.5 |                  75 |             0 |     0 |
-| `ENFERMEDAD LEVE`    |   30 |        37.8 |                  90 |             2 |     3 |
-| `ENFERMEDAD AGUDA`   |   40 |        39.4 |                 125 |             4 |     8 |
-| `ENFERMEDAD CRÓNICA` |   68 |        37.0 |                  88 |            65 |     5 |
+* Estrategias de Ingesta: El pipeline contempla procesos de ingesta batch (lotes) y streaming (tiempo real) para capturar tanto información histórica como datos en tiempo real, consolidando los registros médicos. Posteriormente, los datos son transformados y estandarizados para garantizar compatibilidad entre los sistemas de origen.  
+* Aseguramiento de Calidad: Una vez integrada la información, se ejecutan procesos de validación para detectar registros duplicados, valores faltantes, inconsistencias, errores de formato y datos fuera de rango clínico. En el caso de archivos e imágenes, se verifica su integridad y estructura.
+* Limpieza y Normalización: Se realizan tareas finales de curación de variables médicas con el fin de garantizar que la información utilizada por los modelos sea consistente, confiable y adecuada para el ciclo de Machine Learning.
 
 ---
 
-## 5. Ejecutar sin Docker
+## Procesamiento e Ingeniería de Datos
 
-### 5.1. Crear entorno virtual
+Esta etapa tiene como propósito transformar la información clínica cruda en variables útiles para el entrenamiento de los modelos.
 
-En Windows PowerShell:
-
-```bash
-python -m venv venv
-```
-
-```bash
-.\venv\Scripts\activate
-```
-
-En Linux/Mac:
-
-```bash
-python3 -m venv venv
-```
-
-```bash
-source venv/bin/activate
-```
-
-### 5.2. Instalar dependencias
-
-```bash
-pip install -r requirements.txt
-```
-
-### 5.3. Ejecutar la aplicación
-
-```bash
-python app.py
-```
-
-Luego abrir en el navegador:
-
-```text
-http://localhost:5000
-```
+1. Preprocesamiento: Se realizan procesos de limpieza, normalización y codificación de datos, convirtiendo variables categóricas, síntomas y registros clínicos en representaciones numéricas interpretables por los algoritmos. Asimismo, se manejan los valores faltantes y se unifican las escalas.
+2. Ingeniería de Características (Feature Engineering): Se construyen nuevas variables derivadas a partir de síntomas, antecedentes médicos, resultados de laboratorio y evolución clínica. También pueden generarse variables temporales, agrupaciones de síntomas o representaciones semánticas (embeddings) provenientes de texto clínico e imágenes médicas. Esta fase es fundamental para extraer patrones relevantes en escenarios de enfermedades huérfanas donde la información es limitada.
 
 ---
 
-## 6. Construir y ejecutar con Docker
+## Entrenamiento y Modelos
 
-### 6.1. Construir la imagen
+El objetivo es desarrollar las soluciones predictivas capaces de identificar posibles enfermedades a partir de la información procesada.
 
-Desde la carpeta del proyecto:
+### Tipos de Modelos Utilizados
+* Datos estructurados/tabulares: Modelos de Machine Learning tradicionales como Random Forest, XGBoost, LightGBM o CatBoost.
+* Imágenes médicas: Modelos de Deep Learning basados en Redes Convencionales (CNN).
+* Texto clínico (notas médicas): Modelos basados en Arquitectura Transformers.
+* Segmentación y Patrones: Técnicas no supervisadas como K-Means y HDBSCAN para identificación de agrupamientos asociados a posibles enfermedades.
+* Estrategias para Datos Desbalanceados: Incorporación de balanceo de clases, transfer learning o modelos híbridos.
 
-```bash
-docker build -t servicio-medico-flask .
-```
+### Evaluación y Trazabilidad
+El entrenamiento se realiza dividiendo los datos en conjuntos de entrenamiento, validación y prueba, evitando la fuga de información (data leakage) entre pacientes. Durante esta etapa se ejecutan procesos de ajuste de hiperparámetros y validación cruzada.
 
-### 6.2. Ejecutar el contenedor
-
-```bash
-docker run -p 5000:5000 servicio-medico-flask
-```
-
-Luego abrir en el navegador:
-
-```text
-http://localhost:5000
-```
+* Métricas de Evaluación: Se evalúa mediante Precision, Recall, F1-score y ROC-AUC. Se prioriza especialmente la reducción de falsos negativos debido al alto impacto clínico que representa un diagnóstico no detectado.
+* Versionamiento: Todos los modelos y resultados son registrados bajo un sistema de control de versiones para garantizar la trazabilidad y la reproducibilidad ante futuras actualizaciones.
 
 ---
 
-## 7. Usar el servicio desde la página web
+## Servicios de Modelos y Consumo
 
-1. Abra `http://localhost:5000`.
-2. Ingrese los datos del paciente.
-3. Presione el botón **Obtener respuesta**.
-4. El sistema mostrará uno de los estados definidos.
+Esta etapa se enfoca en el despliegue de los modelos en una infraestructura centralizada que permita su acceso desde diferentes sistemas clínicos.
 
----
-
-## 8. Usar el servicio desde API
-
-El servicio también expone un endpoint tipo API:
-
-```text
-POST http://localhost:5000/predecir
-```
-
-### Ejemplo con curl
-
-```bash
-curl -X POST http://localhost:5000/predecir \
-  -H "Content-Type: application/json" \
-  -d '{
-    "edad": 40,
-    "temperatura": 39.4,
-    "frecuencia_cardiaca": 125,
-    "dias_sintomas": 4,
-    "dolor": 8
-  }'
-```
-
-### Ejemplo con curl en consola
-
-```bash
-curl -X POST http://localhost:5000/predecir -H "Content-Type: application/json" -d "{\"edad\":40,\"temperatura\":39.4,\"frecuencia_cardiaca\":125,\"dias_sintomas\":4,\"dolor\":8}"
-```
-
-### Respuesta esperada
-
-```json
-{
-  "estado": "ENFERMEDAD AGUDA",
-  "estados_posibles": [
-    "NO ENFERMO",
-    "ENFERMEDAD LEVE",
-    "ENFERMEDAD AGUDA",
-    "ENFERMEDAD CRÓNICA"
-  ],
-  "entrada": {
-    "edad": 40,
-    "temperatura": 39.4,
-    "frecuencia_cardiaca": 125,
-    "dias_sintomas": 4,
-    "dolor": 8
-  },
-  "advertencia": "Resultado simulado. No reemplaza valoración médica profesional."
-}
-```
+* Infraestructura y Despliegue: Los modelos entrenados son empaquetados en contenedores (ej. Docker) y desplegados en plataformas Cloud (GCP, Microsoft Azure o AWS), utilizando servicios de orquestación que permiten el autoescalado según la demanda de consultas médicas, garantizando alta disponibilidad y tolerancia a fallos.
+* Interfaces de Consumo (APIs): Los modelos se exponen mediante APIs REST seguras con autenticación basada en tokens institucionales. 
+* Flujo de Información: Las aplicaciones hospitalarias, dashboards o historias clínicas electrónicas envían la información del paciente en formato JSON y reciben de vuelta predicciones asociadas a posibles enfermedades, probabilidades de riesgo y explicaciones del modelo de forma transparente para el personal de salud.
 
 ---
 
-## 9. Probar que la función retorna todos los estados
+## IA Generativa y RAG
 
-Se incluyen pruebas unitarias en la carpeta `tests`.
+Se incorpora como un componente adicional orientado a mejorar la interacción entre el sistema y el usuario clínico, funcionando como un soporte inteligente.
 
-Para ejecutarlas:
+* Tecnología RAG (Retrieval-Augmented Generation): El sistema puede consultar información relevante desde bases documentales, guías clínicas oficiales, antecedentes del paciente o resultados de los modelos predictivos para generar respuestas contextualizadas y comprensibles en lenguaje natural.
+* Procesamiento de Texto: Facilita el análisis de texto libre en historias médicas y notas de evolución, ayudando a resumir información y extraer contexto clave.
+* Explicabilidad: Asiste en la interpretación de las predicciones de los modelos de Machine Learning, traduciendo métricas complejas en explicaciones claras sobre factores de riesgo y síntomas detectados.
 
-```bash
-pytest
+---
+
+## Monitoreo y Observabilidad
+
+Dada la criticidad del entorno médico, el sistema implementa una supervisión continua en producción:
+
+* Métricas de Desempeño: Supervisión en tiempo real de precision, recall, F1-score, tasa de falsos negativos y tiempos de respuesta de la API.
+* Calidad de los Datos: Monitoreo de la información de entrada para detectar anomalías, valores atípicos o cambios en las estructuras de los datos.
+* Detección de Drift: Implementación de mecanismos para detectar Data Drift (degradación por cambios en los datos de entrada) y Concept Drift (cambios en los patrones epidemiológicos o aparición de nuevas enfermedades).
+* Ciclo de Reentrenamiento: El sistema permite procesos periódicos de reentrenamiento con datos nuevos validados. Antes de pasar a producción, toda nueva versión del modelo debe superar una evaluación técnica y una validación clínica.
+
+---
+
+## Conexión Integral del Pipeline
+
+El pipeline funciona como un ecosistema continuo e integrado donde cada etapa alimenta a la siguiente:
+
 ```
-
-Estas pruebas validan que la función puede retornar los cuatro estados requeridos.
-
----
-
-## 10. Endpoints disponibles
-
-| Endpoint    | Método | Descripción                                       |
-| ----------- | ------ | ------------------------------------------------- |
-| `/`         | GET    | Muestra formulario web                            |
-| `/`         | POST   | Recibe datos desde formulario y muestra resultado |
-| `/predecir` | POST   | Recibe JSON y retorna predicción en formato JSON  |
-| `/salud`    | GET    | Verifica que el servicio esté activo              |
-
----
+[Fuentes Clínicas] ──> Suministran datos heterogéneos.
+       │
+[Ingesta y Calidad] ──> Consolida y valida la información.
+       │
+[Procesamiento] ──> Transforma los datos en variables analíticas.
+       │
+[Modelos / ML] ──> Aprenden patrones clínicos y generan predicciones.
+       │
+[Servicios / API] ──> Permiten consumir las predicciones en aplicaciones reales.
+       │
+[IA Generativa / RAG] ──> Mejora la interacción, resúmenes y explicabilidad.
+       │
+[Monitoreo] ──> Observa el comportamiento y retroalimenta con datos para reentrenamiento.
+```
