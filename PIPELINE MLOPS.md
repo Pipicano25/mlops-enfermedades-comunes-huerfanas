@@ -98,7 +98,7 @@ El pipeline funciona como un ecosistema continuo e integrado donde cada etapa al
 # 8. Diagrama general 
 
 Imagen 1. Diagrama general del proceso
-![alt text](img/pipelinemlops.png)
+![alt text](img/pipeline_mlops.png)
 
 ---
 
