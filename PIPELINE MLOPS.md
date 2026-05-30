@@ -1,10 +1,11 @@
-# Taller Pipeline de MLOps
+# **Taller 1 Pipeline de MLOps**
 
-**Anderson Daniel Pipicano Ruiz**
+**Equipo**:
 
-**Fredy Yamid Alvarez Palechor**
-
-**Grupo 2**
+| Nombres                       | Grupo   |
+| ----------------------------- | ------- |
+| Anderson Daniel Pipicano Ruiz | Grupo 2 |
+| Fredy Yamid Alvarez Palechor  | Grupo 2 |
 
 ---
 
