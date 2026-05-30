@@ -13,7 +13,7 @@ Actualmente, el sector salud genera grandes volúmenes de información provenien
 
 El pipeline integra procesos de **adquisición de datos, aseguramiento de calidad, ingeniería de características, entrenamiento de modelos, despliegue de servicios inteligentes y monitoreo continuo, permitiendo construir una solución escalable, reproducible y adaptable a nuevos datos clínicos**.
 
-![alt text](img\pipeline_mlops.png)
+![alt text](img/pipeline_mlops.png)
 
 ## **1. Fuentes de Datos**
 
@@ -43,7 +43,7 @@ Las principales variables clínicas consideradas dentro de las fuentes de inform
 - Evolución clínica y temporal del paciente.
 - Tratamientos y medicamentos registrados.
 
-![alt text](img\fuente_datos.png)
+![alt text](img/fuente_datos.png)
 
 ## **2. Ingesta y Calidad del Dato**
 
@@ -87,7 +87,7 @@ Debido a la **sensibilidad de la información médica, toda la etapa de ingesti�
 
 Finalmente, esta etapa permite asegurar que las decisiones clínicas soportadas por los modelos de **Machine Learning se construyan sobre información validada, estandarizada y confiable** reduciendo riesgos asociados a errores de calidad del dato, sesgos analíticos y degradación del desempeño predictivo.
 
-![alt text](img\ingesta_calidad_dato.png)
+![alt text](img/ingesta_calidad_dato.png)
 
 ## **3. Procesamiento e Ingeniería de Datos**
 
@@ -95,7 +95,7 @@ La etapa de **procesamiento e ingeniería de datos** tiene como propósito trans
 
 Posteriormente, se desarrolla la **ingeniería de características**, donde se construyen **nuevas variables derivadas a partir de síntomas, antecedentes médicos, resultados de laboratorio y evolución clínica de los pacientes**. También pueden **generarse variables temporales, agrupaciones de síntomas o representaciones semánticas provenientes de texto clínico e imágenes médicas**. Esta etapa es **fundamental para extraer patrones relevantes y mejorar la capacidad predictiva de los modelos** especialmente en escenarios de enfermedades huérfanas donde la información disponible es limitada y altamente desbalanceada.
 
-![alt text](img\procesamiento_ingenieria.png)
+![alt text](img/procesamiento_ingenieria.png)
 
 ## **4. Entrenamiento y Modelos**
 
@@ -103,11 +103,11 @@ La etapa de **entrenamiento y modelos** tiene como **objetivo desarrollar soluci
 
 El **entrenamiento del modelo se realiza utilizando conjuntos de datos divididos en entrenamiento, validación y prueba**, evitando fuga de información entre pacientes y garantizando una evaluación confiable del desempeño. Durante esta etapa se ejecutan procesos de **ajuste de hiperparámetros, validación cruzada y comparación entre diferentes algoritmos** con el fin de **seleccionar el modelo más robusto y preciso**. La evaluación se realiza mediante **métricas como precision, recall, F1-score y ROC-AUC**, priorizando especialmente la **reducción de falsos negativos** debido al impacto clínico que puede representar un diagnóstico no detectado. Finalmente los **modelos y resultados obtenidos son versionados y registrados para garantizar trazabilidad, reproducibilidad y control sobre futuras actualizaciones del sistema**.
 
-![alt text](img\entrenamiento_modelo.png)
+![alt text](img/entrenamiento_modelo.png)
 
 ## **5. Automatizacion y despliegue**
 
-![alt text](img\automatizacion_despliegue.png)
+![alt text](img/automatizacion_despliegue.png)
 
 ## **6. Servicios de Modelos y Consumo**
 
@@ -115,7 +115,7 @@ La etapa de servicios de **modelos y consumo** tiene como **objetivo desplegar l
 
 Una vez desplegados, los modelos serán **expuestos mediante APIs REST seguras y endpoints específicos para inferencia** autenticados mediante tokens o credenciales institucionales. A través de estos **servicios, aplicaciones hospitalarias, dashboards clínicos, historias clínicas electrónicas o plataformas web** podrán enviar información de pacientes en **formato JSON** para recibir respuesta predicciones asociadas a **posibles enfermedades, probabilidades de riesgo y explicaciones generadas por el modelo**. Los usuarios clínicos accederán a estas funcionalidades desde interfaces web o sistemas hospitalarios integrados, sin necesidad de interactuar directamente con la infraestructura del modelo.
 
-![alt text](img\nodelo_consumo.png)
+![alt text](img/nodelo_consumo.png)
 
 ## **7. IA Generativa y RAG**
 
@@ -123,7 +123,7 @@ La etapa de **IA Generativa y RAG** se incorpora como un componente adicional or
 
 Este componente también **facilitará el procesamiento de texto clínico proveniente de historias médicas, notas de evolución o reportes hospitalarios** ayudando a resumir información relevante y extraer contexto útil para el diagnóstico. Adicionalmente, la **IA generativa podrá asistir en la interpretación de las predicciones generadas** por los modelos de Machine Learning, proporcionando explicaciones más claras sobre posibles **factores de riesgo, síntomas relevantes o patrones detectados, fortaleciendo así la toma de decisiones clínicas y la interacción del usuario con la solución analítica**.
 
-![alt text](img\ia.png)
+![alt text](img/ia.png)
 
 ## **8. Monitoreo y Observabilidad**
 
@@ -131,7 +131,7 @@ La etapa de **monitoreo y observabilidad** es fundamental debido a la criticidad
 
 Adicionalmente, el pipeline contempla **mecanismos de detección de drift de datos y drift de concepto** para identificar variaciones en **patrones epidemiológicos, aparición de nuevas enfermedades o cambios en el comportamiento de la población que puedan degradar el desempeño del modelo**. Debido a que continuamente se generan nuevos registros clínicos y datos médicos, el sistema debe permitir procesos periódicos de reentrenamiento utilizando información más reciente y validada. Antes de desplegar **nuevas versiones del modelo, estas deben pasar nuevamente por procesos de evaluación técnica y validación clínica, garantizando trazabilidad, control de versiones y mejora continua de la solución**.
 
-![alt text](img\monitoreo.png)
+![alt text](img/monitoreo.png)
 
 ## **Conexión Integral del Pipeline**
 
@@ -148,8 +148,8 @@ El pipeline funciona como un ecosistema continuo e integrado donde cada etapa al
 
 ### **1. Diagrama general del proceso**
 
-![alt text](img\pipeline_mlops.png)
+![alt text](img/pipeline_mlops.png)
 
 ### **2. Otras tecnologías recomendadas**
 
-![alt text](img\tecnologia.png)
+![alt text](img/tecnologia.png)
